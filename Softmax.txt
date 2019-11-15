@@ -1,0 +1,23 @@
+Logistic regression and Softmax regression for document classification
+
+Logistic regression은 binary classification에 널리 이용되는 방법입니다. 이에 대한 기하학적인 의미를 알아봅니다.
+또한 클래스가 3개 이상일 경우의 일반화된 logistic regression인 Softmax regression으로 의미를 확장해봅니다.
+Softmax regression을 이해하면 Word2Vec과 같은 word embedding, representation learning의 원리를 이해할 수 있습니다.
+
+Geometric interpretation of logistic regression
+Logistic regression은 머신러닝, 데이터마이닝 공부를 시작할 때 가장 먼저 만나는 classifier 입니다.
+Logistic은 (X,Y)가 주어졌을 때, feature X 와 Y와의 관계를 학습합니다. 특히 Y가 positive/negative와 같이 두 개의 클래스로
+이루어져 있을 때 이용하는 방법입니다. Logistic regression은 하나의 row, 혹은 벡터 공간의 하나의 점 x가 주어졌을 때, 클래스가
+y일 확률을 학습한다고도 이야기합니다. exponential의 범위는 (0,+∞) 이기 때문에 1/1+exp(-θ^Tx) 는 (0,1) 의 범위를 지닙니다.
+그래서 확률로 해석을 할 수 있습니다.
+
+식을 조금 더 자세하게 풀어보면 positive, negative 클래스에 속할 확률을 각각 계산할 수 있습니다. exponential의 값은
+nonnegative이기 때문에 모든 경우에 대하여 ()의 값을 더하여, 이 값으로 각각의 ()를 나눠주면 확률 형식이 됩니다.
+
+여기서 ()의 분자, 분모를 ()로 나눠주면 ()이 됩니다. positive일 확률을 계산하였고, 확률의 총합은 1이기 때문에 negative는
+따로 계산하지 않아도 되는 것입니다.
+
+혹은 logistic regression을 기하학적으로 해석하기도 합니다. Bias를 포함한 logistic regression의 단면 (hyperplane)은
+빨간색과 파란색의 점들을 구분하는 결정단면 (separating hyperplane) 입니다.
+쉽게 말해 경계면을 학습하는 것입니다. 이 결정단면의 수식은 (θ^Tx) 입니다.
+즉, 단면 위에 있는 점은 positive, negative 클래스에 속할 확률이 각각 0.5라는 의미입니다. 어느 쪽에 속하는지 확신할 수 없기 때문입니다.
