@@ -6,10 +6,14 @@ Softmax regression을 이해하면 Word2Vec과 같은 word embedding, representa
 
 Geometric interpretation of logistic regression
 Logistic regression은 머신러닝, 데이터마이닝 공부를 시작할 때 가장 먼저 만나는 classifier 입니다.
-Logistic은 (X,Y)가 주어졌을 때, feature X 와 Y와의 관계를 학습합니다. 특히 Y가 positive/negative와 같이 두 개의 클래스로
+Logistic은 (X,Y)가 주어졌을 때, feature X 와 Y 와의 관계를 학습합니다. 특히 Y가 positive/negative와 같이 두 개의 클래스로
+# Logistic은 (X,Y)가 주어졌을 때, feature X 와 Y 와의 관계를 학습합니다.
 이루어져 있을 때 이용하는 방법입니다. Logistic regression은 하나의 row, 혹은 벡터 공간의 하나의 점 x가 주어졌을 때, 클래스가
-y일 확률을 학습한다고도 이야기합니다. exponential의 범위는 (0,+∞) 이기 때문에 1/1+exp(-θ^Tx) 는 (0,1) 의 범위를 지닙니다.
+y일 확률을 학습한다고도 이야기합니다. 
+# Logistic regression은 하나의 row, 혹은 벡터 공간의 하나의 점 x가 주어졌을 때, 클래스가 y 일 확률을 학습한다고도 이야기합니다.
+exponential의 범위는 (0,+∞) 이기 때문에 1/1+exp(-θ^Tx) 는 (0,1) 의 범위를 지닙니다.
 그래서 확률로 해석을 할 수 있습니다.
+# 그래서 확률로 해석을 할 수 있습니다.
 
 식을 조금 더 자세하게 풀어보면 positive, negative 클래스에 속할 확률을 각각 계산할 수 있습니다. exponential의 값은
 nonnegative이기 때문에 모든 경우에 대하여 ()의 값을 더하여, 이 값으로 각각의 ()를 나눠주면 확률 형식이 됩니다.
