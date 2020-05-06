@@ -1,0 +1,76 @@
+Artificial Neural Network 구현
+몇가지 Neural Network 생성용 library가 있는데, 여기서는 tensorflow와 Keras를 사용하려고 한다.
+추가로 Keras의 내부 모듈 중 Sequential 과 Dense를 사용하고자 한다.
+참고로 Sequential은 Neural Network를 초기화하는데 필요한 모듈이고, Dense는 Neural Network를 구성하는 Layer를 생성하는데 필요하다.
+
+import keras
+from keras.models import Sequential
+from keras.layers import Dense
+
+이제 ANN을 만드는데, 일단 우리가 어떤 ANN을 만들고, Layer를 몇개를 둘 것이며, input layer를 어떻게 구성할 것인가를 결정해야 한다.
+우선 만들 ANN의 template를 생성해놓고 각 Layer에 대한 구현은 진행하면서 해보고자 한다.
+
+# Importing the Keras libraries and packages
+import keras
+from keras.models import Sequential
+from keras.layers import Dense
+
+# Initializing the ANN
+classifier = Sequential()
+
+실제 구현에 앞서 이론적인 내용을 다루자면 ANN을 training 하는데 있어서 몇가지 알고리즘이 있지만,
+이 예제에서는 Stochastic Gradient Descent(SGD) 라는 방법을 사용할 예정이다.
+간단히 설명하자면 이전 포스트에서 잠깐 소개한 Cost Function(손실 함수, 비용 함수) 
+
+* 모델을 학습할 때는 비용(cost) 즉, 오류를 최소화하는 방향으로 진행
+비용이 최소화되는 곳이 성능이 가장 잘 나오는 부분이며, 가능한 비용이 적은 부분을 찾는 것이 최적화(Optimization) 이고, 
+일반화 (Generalization) 의 방법
+
+을 Minimize 시키는 방법 중 하나로 Gradient Descent 라는 알고리즘이 있는데,
+이 최소값을 전체 Dataset이 아닌 하나 단위로 잘게 쪼개 학습시키는 방법이 SGD 라는 것이다.
+
+이를 통해 ANN을 학습시키는 절차는 크게 7가지 과정이 있다.
+
+1) Hidden Layer로 연결되는 각각의 Synapse의 weight를 0이 아닌 아주 작은 임의의 변수로 초기화한다.
+2) training dataset에서 하나의 data를 input layer에 넣고 각각의 Node로 mapping한다.
+3) Forward-propagation : 현재는 정해진 weight 상태에서 각각의 Neuron을 활성화시킨다. 여기서 활성화의 의미는 별다른게 아니고,
+input layer의 값과 weight 간의 weighted sum을 임의의 activation function에 넣는다는 것이다.
+4) 이제 구한 예측값과 실제 결과값을 비교하고, 이 차이를 계산한다.
+5) Back-propagation : 당연히 오차가 있기 때문에 차이를 최소화 하기 위한 weight를 다시 계산하고, 이를 앞에서 사용했던
+weight에 update 해줘야 한다. 이 때 사용자가 정의한 learning rate에 따라 그 update 되는 정도가 달라진다.
+6) 1)~5) 까지의 과정을 반복한다. 보통 하나의 dataset 에 대해서 학습을 진행하는 것을 Reinforcement Learning, 전체 dataset에 대해서
+학습을 진행하는 방식을 Batch Learning 이라고 하는데, 우리가 진행하는 Stochastic Gradient Descent 는 일종의 Reinforcement Learning 이라고 보면
+될 것 같다.
+7) 전체 Dataset을 학습시키는 정도를 Epoch이라고 표현하는데, 사용자가 정의한 Epoch만큼 1)~6) 과정을 반복해서 수행한다.
+
+여기서 사용자가 정의해야 될 요소가 몇가지 있는데,
+- Input Layer의 Input Node 갯수
+- Activation function
+- Learining Rate
+
+정도다. 학습을 시킬 변수가 결국은 Input Node 의 갯수가 될텐데, 앞에서 몇가지 정리 과정을 통해 우리는 11개의 변수를 선정했다.
+그리고 Activation Function과 관련해서는 많은 Activation function 종류가 있을텐데, 여기서 사용 되는 것은 흔히 ReLU가 부르는
+Rectifier function 을 사용할 것이다. 그리고 하나의 input layer와 2개의 hidden layer, output layer로 구성된 perceptron(퍼셉트론)을 만들 것이다.
+
+Keras에서 hidden Layer를 만들어주는 함수는 Dense function인데, 잠깐 Dense function 이 가져야 할 인자에 대해서 살펴본다.
+
+첫번째 인자인 units은 현재 dense를 통해서 만들 hidden layer의 Node 의 수를 정의하는 것이다.
+사실 이런 Layer를 잘 설계한다는 개념 자체는 여러가지 복합적인 요소들이 좌우한다.
+우선 Input Layer 에서 Hidden Layer로 넘어갈 때의 Synapse의 수를 적절히 조절한다던가, 지금 우리가 원하는 것과 같이 Hidden Layer의 갯수를
+정의하는 것 자체가 전체 Neural Network의 성능을 크게 좌우할 수 있다. 보통 이런 식으로 인자를 결정짓는 과정을 Parameter Tuning 이라고 하는데,
+우선 여기서 결정지어야 할 Node의 갯수는 Input Layer의 Node와 Output Layer의 Node의 평균 갯수를 정의하고자 한다. 그럼 현재 Input Layer의 Node의
+갯수는 11개, Output Layer의 Node는 1개 (우리가 얻어야 할 결과는 0, 1로 표현된 Binary Value 이므로 ..) 이기 때문에 결국 6 이라는 값이
+units에 들어갈 인자가 되겠다. (참고로 이런 결과는 경험적인 결과이지 딱히 어떤 이론에 기반한 내용이 아니기 때문에 더 좋은 방식이 있을 수 있음)
+
+그 다음으로 결정할 수 있는 것은 kernel_initializer 인데, 우리가 사용하고 있는 dataset 의 구성은 현재 정규 분포를 띄고 있기 때문에
+kernel 도 동일하게 uniform distribution 으로 지정해준다.
+
+다음 결정 요소는 activation function 은 앞에서 정의한 ReLU function 을 쓰게 될 것이다.
+
+마지막으로 위의 인자상에서는 표시되어 있지 않는데 input_dim 이라는 것을 정의해야 한다. 이름에도 나와있다시피 Input Node 의 수를 나타내줘야 하는 것이다.
+우리가 현재 Sequential() 함수를 통해서 Neural Network의 Template만 만들었고, 앞에서 언급했던 것처럼 지금 하는 것이 Input Layer 와 Hidden Layer를
+지정해 주는 것이므로 여기에는 Input_dim 을 지정해줘야 한다. 
+
+마지막으로 Output Layer의 activation function 으로 sigmoid function 을 사용하고자 한다. 참고로 sigmoid function 은 다음과 같이 생겼고,
+보통 어떤 값이 나올 확률을 계산할 때 많이 사용된다.
+
