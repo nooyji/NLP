@@ -1,0 +1,53 @@
+Word2vec 개요
+
+SVD 기반 모형에서는 대용량의 데이터를 계산하고 정보를 도출하는 방식을 취했습니다.
+이에 따라 단어가 하나만 추가되더라도 많은 계산을 해야되는 단점이 있었습니다. 
+전체를 계산하는 것 대신, 어떤 계산을 한 번 반복할 때마다 가중치를 학습할 수 있고 계속 반복하여 주어진 맥락 (context) 에 따른 단어 (word) 의 확률을 계산해나가는 방식을 
+Iteration based methods 라고 합니다. 
+
+Word2vec 은 계산 효율이 좋고, 성능이 좋은 것으로 알려져있습니다.
+NLP에서는 학습하고자하는 단어 (word) 와 주변 단어, 즉 맥락(context) 로 분류합니다.
+Word2vec 은 학습할 word를 input으로 두느냐, output으로 두느냐에 따라서 CBOW와 Skip-Gram으로 분류됩니다.
+
+Continuous Bag Of Word ("""CBOW""") : 문장의 word(단어) 를 input으로 하고, context(맥락) 를 output으로 간주하여 학습하는 모형
+"""Skip-Gram""" : 문장의 context (맥락) 를 input으로 하고, word (단어)를 output으로 간주하여 학습하는 모형
+
+CBOW와 Skip-Gram은 단순한 방향의 차이입니다.
+이렇게 모형을 정의하고 나면 어떻게 학습할지가 다음 단계입니다.
+SVD 기반 방법의 단점 중 하나는 분석하고자 하는 데이터 word(단어) 수가 많아지면 계산하기 힘들다는 점이었습니다.
+Word2vec에서 비슷한 문제가 발생하는데, 해당 단점을 해결하기 위하여 Negative Sampling, Hierarchical Softmax을 이용합니다.
+
+Negative Sampling : 단어 전체를 사용하지 않고 일부만 랜덤하게 선택하여 학습하는 방법
+Hierachical Softmax : 모든 단어를 고려하되, binary tree 를 이용하여 출력층의 softmax 함수 계산을 최소화하는 방법
+
+Language Models
+
+Language model이란 문장 혹은 단어를 확률로 나타내는 모형을 말합니다.
+우선 m개의 word 로 이루어진 문장 ..~
+위 모형은 모든 단어가 완벽한 독립이라고 가정하고 1개 단어 단위로 쪼갰는데 이를 Unigram model 이라고 부릅니다.
+Unigram model은 사실 one-hot vector 를 그대로 가지고 분석하는 것과 다름이 없으며, 문장을 구성하는 모든 단어가 독립이라고 가정하는 것 자체가 무리가 있습니다.
+아주 자연스럽게 우리는 단어 활용이 단순히 직전의 단어만, 다음에 나타날 단어에 영향을 준다고 생각해 볼 수 있습니다.
+즉 2개 단어 뭉치를 가지고서 모델링을 하면 이를 ""Bigram model""이라 부릅니다.
+이를 일반화하여 단어 활용이 바로 직전 n-1 개의 단어에만 의존하는 모형은 ""N-gram model"" 이라 합니다.
+Language Model 역시 단어의 수가 많아지면 계산량이 큽니다.
+이어서 등장할 CBOW, Skip-Gram은 이러한 Language Model을 효율적으로 학습할 것인가에 대한 딥러닝 프레임워크로 받아들일 수 있습니다.
+
+Continuous Bag of Word model (CBOW)
+
+CBOW는 word(단어)를 output으로, context(맥락)를 input으로 사용하는 모형입니다.
+즉, "The boy is going to school." 이라는 문장을 고려했을 때, context size를 2로 했을 경우 'is'라는 word를 학습하기 위해 output으로 간주하고,
+'The', 'boy', 'going', 'to' 를 input으로 이용하는 모형이라는 말과 같습니다.
+
+Skip-Gram Model
+
+Skip-Gram 은 context(맥락) 를 input으로 word(단어)를 output 으로 이용하는 모형입니다.
+즉, "The boy is going to school." 이라는 문장을 고려했을 때, context size를 2로 했을 경우 'is' 라는 word를 학습하기 위해 input으로 간주하고,
+'The', 'boy', 'going', 'to' 를 output으로 이용하는 모형이라는 말과 같습니다.
+정확하게 CBOW와 input과 output 을 반대로 사용합니다.
+
+현재 Skip-Gram 을 CBOW보다 더 많이 이용하고 있습니다. 조금만 생각해보면 Skip-Gram이 왜 상대적으로 우세한지 알 수 있습니다.
+
+가중치는 output과 가중치에 곱해져 나온 결과를 비교 평가하며 학습됩니다.
+즉 빈번하게 학습될 수록 가중치가 적절히 평가될 가능성이 높습니다.
+Skip-Gram은 구조상 context 로써, word가 CBOW와 비교하여 빈번하게 학습됩니다.
+따라서 Skip-Gram이 대부분의 상황에서 더 좋은 성능을 보인다고 알려져있습니다. 
